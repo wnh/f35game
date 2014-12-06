@@ -70,7 +70,7 @@ function love.load()
 		offsetY = 60,
 		width = 2,
 		height = 5,
-		speed = 10,
+		speed = 500,
 		angle = 0
 	})
 	table.insert(weapons.cannon.hardpoints, {
@@ -78,16 +78,32 @@ function love.load()
 		offsetY = 60,
 		width = 2,
 		height = 5,
-		speed = 10,
+		speed = 500,
 		angle = 0
+	})
+	table.insert(weapons.cannon.hardpoints, {
+		offsetX = (playerShip.actualX / 2) + 30,
+		offsetY = 60,
+		width = 2,
+		height = 5,
+		speed = 500,
+		angle = 45
+	})
+	table.insert(weapons.cannon.hardpoints, {
+		offsetX = (playerShip.actualX / 2) - 30,
+		offsetY = 60,
+		width = 2,
+		height = 5,
+		speed = 500,
+		angle = 315
 	})
 
 end
 
-function love.update()
-	movePlayerShip()
-	fireWeapons()
-	updateProjectiles()
+function love.update(dt)
+	movePlayerShip(dt)
+	fireWeapons(dt)
+	updateProjectiles(dt)
 end
 
 function love.draw()
@@ -102,33 +118,33 @@ function love.draw()
 	drawProjectiles()
 end
 
-function movePlayerShip()
+function movePlayerShip(dt)
 	if love.keyboard.isDown("up") then
 		if playerShip.y > 10 then
-			playerShip.y = playerShip.y - 10
+			playerShip.y = playerShip.y - 400*dt
 		end
 	end	
 	
 	if love.keyboard.isDown("down") then
 		if playerShip.y < (workingDimensionY - playerShip.actualY) then
-			playerShip.y = playerShip.y + 10
+			playerShip.y = playerShip.y + 400*dt
 		end
 	end
 	
 	if love.keyboard.isDown("right") then
 		if playerShip.x < (workingDimensionX - playerShip.actualX) then
-			playerShip.x = playerShip.x + 10
+			playerShip.x = playerShip.x + 400*dt
 		end
 	end	
 	
 	if love.keyboard.isDown("left") then
 		if playerShip.x > 0 then
-			playerShip.x = playerShip.x - 10
+			playerShip.x = playerShip.x - 400*dt
 		end
 	end
 end
 
-function updateProjectiles()
+function updateProjectiles(dt)
 	
 	-- do movement calculations
 	if next(player.projectiles) ~= nil then
@@ -137,8 +153,8 @@ function updateProjectiles()
 			scaleY = -math.cos(math.rad(projectile.angle))
 			movementX = projectile.speed * scaleX
 			movementY = projectile.speed * scaleY
-			projectile.x = projectile.x + movementX
-			projectile.y = projectile.y + movementY
+			projectile.x = projectile.x + movementX*dt
+			projectile.y = projectile.y + movementY*dt
 		end
 	end
 	
@@ -166,7 +182,7 @@ function drawProjectiles()
 	end
 end
 
-function fireWeapons()
+function fireWeapons(dt)
 	if player.equippedWeapon == "cannon" then
 		weapons.cannon.lastFire = weapons.cannon.lastFire + love.timer.getDelta()
 		if weapons.cannon.lastFire > weapons.cannon.frequency then
