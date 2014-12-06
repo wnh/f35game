@@ -29,8 +29,13 @@ function love.load()
 	
 	desktopDimensionX, desktopDimensionY = love.window.getDesktopDimensions()
 	
-	workingDimensionX = desktopDimensionX - 200;
-	workingDimensionY = desktopDimensionY - 200;
+	-- for testing, not full screen
+	--workingDimensionX = desktopDimensionX - 200
+	--workingDimensionY = desktopDimensionY - 200
+	
+	-- for full screen
+	workingDimensionX = desktopDimensionX
+	workingDimensionY = desktopDimensionY
 	
 	playerShip["startPointX"] = (workingDimensionX / 2) - (playerShip.actualX / 2)
 	playerShip["startPointY"] = (workingDimensionY - playerShip.actualY)
@@ -48,8 +53,8 @@ function love.load()
 		print("player ship starting point Y " .. playerShip.startPointY)
 	end
 	
-	--love.window.setMode(desktopDimensionWidth - 200, desktopDimensionHeight - 200, {["fullscreen"]=true})
-	love.window.setMode(desktopDimensionX - 200, desktopDimensionY - 200)
+	love.window.setMode(workingDimensionX, workingDimensionY, {["fullscreen"]=true})
+	--love.window.setMode(workingDimensionX, workingDimensionY)
 	love.window.setTitle("Some cool title here")
 	
 	player = {}
@@ -62,7 +67,7 @@ function love.load()
 	
 	weapons["cannon"] = {
 		hardpoints = {},
-		frequency = 0.1,
+		frequency = 0.15,
 		lastFire = 0
 	}	
 	table.insert(weapons.cannon.hardpoints, {
@@ -87,7 +92,7 @@ function love.load()
 		width = 2,
 		height = 5,
 		speed = 500,
-		angle = 45
+		angle = 20
 	})
 	table.insert(weapons.cannon.hardpoints, {
 		offsetX = (playerShip.actualX / 2) - 30,
@@ -95,7 +100,51 @@ function love.load()
 		width = 2,
 		height = 5,
 		speed = 500,
-		angle = 315
+		angle = 340
+	})
+	
+	weapons["turret"] = {
+		hardpoints = {},
+		frequency = 0.1,
+		lastFire = 0
+	}	
+	table.insert(weapons.turret.hardpoints, {
+		offsetX = (playerShip.actualX / 2) + 30,
+		offsetY = 60,
+		width = 2,
+		height = 5,
+		speed = 500,
+		angle = 0
+	})
+	table.insert(weapons.turret.hardpoints, {
+		offsetX = (playerShip.actualX / 2) - 30,
+		offsetY = 60,
+		width = 2,
+		height = 5,
+		speed = 500,
+		angle = 0
+	})	
+	
+	weapons["gatling"] = {
+		hardpoints = {},
+		frequency = 0.04,
+		lastFire = 0
+	}	
+	table.insert(weapons.gatling.hardpoints, {
+		offsetX = (playerShip.actualX / 2) + 30,
+		offsetY = 60,
+		width = 2,
+		height = 5,
+		speed = 500,
+		angle = 0
+	})
+	table.insert(weapons.gatling.hardpoints, {
+		offsetX = (playerShip.actualX / 2) - 30,
+		offsetY = 60,
+		width = 2,
+		height = 5,
+		speed = 500,
+		angle = 0
 	})
 
 end
@@ -106,6 +155,15 @@ function love.update(dt)
 	updateProjectiles(dt)
 end
 
+function love.keypressed(key, isrepeat)
+	if key == "c" then
+		weaponController(key)
+	end
+	if key == "escape" then
+      love.event.quit()
+   end
+end
+
 function love.draw()
     love.graphics.draw(playerShip.image, playerShip.x, playerShip.y, 0, playerShip.scaleX, playerShip.scaleY)
 	
@@ -114,34 +172,67 @@ function love.draw()
 	end
 	
 	love.graphics.print("Projectiles: " .. table.getn(player.projectiles), 10, 10)
+	love.graphics.print("Equipped Weapon: " .. player.equippedWeapon, 10, 25)
+	
+	love.graphics.print("Press \"C\" to switch weapons", 10, 200)
+	love.graphics.print("Press \"ESC\" to exit", 10, 215)
 	
 	drawProjectiles()
 end
 
 function movePlayerShip(dt)
-	if love.keyboard.isDown("up") then
+	if love.keyboard.isDown("w", "up") then
 		if playerShip.y > 10 then
 			playerShip.y = playerShip.y - 400*dt
 		end
 	end	
 	
-	if love.keyboard.isDown("down") then
+	if love.keyboard.isDown("s", "down") then
 		if playerShip.y < (workingDimensionY - playerShip.actualY) then
 			playerShip.y = playerShip.y + 400*dt
 		end
 	end
 	
-	if love.keyboard.isDown("right") then
+	if love.keyboard.isDown("d", "right") then
 		if playerShip.x < (workingDimensionX - playerShip.actualX) then
 			playerShip.x = playerShip.x + 400*dt
 		end
 	end	
 	
-	if love.keyboard.isDown("left") then
+	if love.keyboard.isDown("a", "left") then
 		if playerShip.x > 0 then
 			playerShip.x = playerShip.x - 400*dt
 		end
 	end
+end
+
+function weaponController(key)
+	if key == "c" then
+		local foundCurrent = false
+		local weaponChanged = false
+		local firstWeapon = ""
+		for weapon, details in pairs(weapons) do
+			if firstWeapon == "" then
+				firstWeapon = weapon
+			end
+
+			-- found current was set in previous loop, so this must be the next weapon, let's equip it.
+			if foundCurrent then
+				player.equippedWeapon = weapon
+				weaponChanged = true
+				break
+			end
+		
+			if weapon == player.equippedWeapon then
+				foundCurrent = true
+			end
+		end
+		
+		-- we got to the end, found the current, but didn't switch the weapon, must have been on the last weapon in the list. Set the weapon to the first weapon in the list.
+		if foundCurrent and not weaponChanged then
+			player.equippedWeapon = firstWeapon
+		end
+	end	
 end
 
 function updateProjectiles(dt)
@@ -173,11 +264,11 @@ end
 function drawProjectiles()
 	if next(player.projectiles) ~= nil then
 		for key, projectile in pairs(player.projectiles) do
-		print("we have projectiles")
-			if projectile.projectileType == "cannon" then
+			-- for now, cannon, turret and gatling are drawn the same
+			if projectile.projectileType == "cannon" or projectile.projectileType == "turret" or projectile.projectileType == "gatling" then
 				vertices = calculateCannonRectangle(projectile)
 				love.graphics.polygon("fill", vertices)
-			end
+			end			
 		end
 	end
 end
@@ -188,6 +279,22 @@ function fireWeapons(dt)
 		if weapons.cannon.lastFire > weapons.cannon.frequency then
 			fireCannon()
 			weapons.cannon.lastFire = 0
+		end
+	end
+	
+	if player.equippedWeapon == "turret" then
+		weapons.turret.lastFire = weapons.turret.lastFire + love.timer.getDelta()
+		if weapons.turret.lastFire > weapons.turret.frequency then
+			fireTurret()
+			weapons.turret.lastFire = 0
+		end
+	end	
+	
+	if player.equippedWeapon == "gatling" then
+		weapons.gatling.lastFire = weapons.gatling.lastFire + love.timer.getDelta()
+		if weapons.gatling.lastFire > weapons.gatling.frequency then
+			fireGatling()
+			weapons.gatling.lastFire = 0
 		end
 	end
 end
@@ -207,8 +314,42 @@ function fireCannon()
 		
 		table.insert(player.projectiles, projectile)
 	end
-	
-	
+end
+
+function fireGatling()
+	for key, hardpoint in pairs(weapons.gatling.hardpoints) do
+		local projectile = {
+			x = playerShip.x + hardpoint.offsetX,
+			y = playerShip.y + hardpoint.offsetY,
+			projectileType = "gatling",
+			collision = false,
+			speed = hardpoint.speed,
+			angle = hardpoint.angle,
+			width = hardpoint.width,
+			height = hardpoint.height
+		}
+		
+		table.insert(player.projectiles, projectile)
+	end
+end
+
+
+function fireTurret()
+	-- turret weapon will fire at the current mouse location.
+	for key, hardpoint in pairs(weapons.turret.hardpoints) do
+		local projectile = {
+			x = playerShip.x + hardpoint.offsetX,
+			y = playerShip.y + hardpoint.offsetY,
+			projectileType = "turret",
+			collision = false,
+			speed = hardpoint.speed,
+			angle = _calculateShipToMouseAngle(hardpoint),
+			width = hardpoint.width,
+			height = hardpoint.height
+		}
+		
+		table.insert(player.projectiles, projectile)
+	end
 end
 
 function calculateCannonRectangle(projectile)
@@ -245,4 +386,22 @@ function rotatePoint(pointX, pointY, originX, originY, angle)
 	y = math.sin(angle) * (pointX-originX) + math.cos(angle) * (pointY-originY) + originY
 	
 	return x, y
+end
+
+function _calculateShipToMouseAngle(hardpoint)
+	mouseX = love.mouse.getX()
+	mouseY = love.mouse.getY()
+	
+	print("mouse x: " .. mouseX)
+	print("mouse y: " .. mouseY)
+	
+	local angle = math.deg(math.atan2(mouseY - (playerShip.y + hardpoint.offsetY), mouseX - (playerShip.x + hardpoint.offsetX)))
+	
+	if angle < 0 then
+		angle = angle + 360
+	end
+	
+	angle = angle + 90
+	
+	return angle
 end
