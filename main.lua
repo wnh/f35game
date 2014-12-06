@@ -64,15 +64,7 @@ function love.load()
 		hardpoints = {},
 		frequency = 0.1,
 		lastFire = 0
-	}
-	table.insert(weapons.cannon.hardpoints, {
-		offsetX = (playerShip.actualX / 2) - 30,
-		offsetY = 60,
-		width = 2,
-		height = 5,
-		speed = 10,
-		angle = 315
-	})	
+	}	
 	table.insert(weapons.cannon.hardpoints, {
 		offsetX = (playerShip.actualX / 2) - 30,
 		offsetY = 60,
@@ -81,14 +73,6 @@ function love.load()
 		speed = 10,
 		angle = 0
 	})
-	table.insert(weapons.cannon.hardpoints, {
-		offsetX = (playerShip.actualX / 2) + 30,
-		offsetY = 60,
-		width = 2,
-		height = 5,
-		speed = 10,
-		angle = 45
-	})	
 	table.insert(weapons.cannon.hardpoints, {
 		offsetX = (playerShip.actualX / 2) + 30,
 		offsetY = 60,
