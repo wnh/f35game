@@ -1,88 +1,239 @@
 debugOn = true
 showFPS = true
+fullScreen = false
+lastCollision = 0
 
 function love.load()
-	playerShip = {
-		x = 0,
-		y = 0,
-		shields = 50,
-		health = 100,
-		scaleX = 0.15,
-		scaleY = 0.15,
-		image = love.graphics.newImage("playerShip.png")
-	}
-	
-	playerShip["imageX"] = playerShip.image:getWidth()
-	playerShip["imageY"] = playerShip.image:getHeight()
-	
-	playerShip["actualX"] = playerShip.imageX * playerShip.scaleX
-	playerShip["actualY"] = playerShip.imageY * playerShip.scaleY
-	
-	
-	if debugOn then
-		print("player ship image dimension X " .. playerShip.imageX)
-		print("player ship image dimension Y " .. playerShip.imageY)
-
-		print("player ship actual dimension X " .. playerShip.actualX)
-		print("player ship actual dimension Y " .. playerShip.actualY)
-	end
-	
-	desktopDimensionX, desktopDimensionY = love.window.getDesktopDimensions()
-	
-	-- for testing, not full screen
-	--workingDimensionX = desktopDimensionX - 200
-	--workingDimensionY = desktopDimensionY - 200
-	
-	-- for full screen
-	workingDimensionX = desktopDimensionX
-	workingDimensionY = desktopDimensionY
-	
-	playerShip["startPointX"] = (workingDimensionX / 2) - (playerShip.actualX / 2)
-	playerShip["startPointY"] = (workingDimensionY - playerShip.actualY)
-	
-	playerShip.x = playerShip.startPointX
-	playerShip.y = playerShip.startPointY
-	
-	if debugOn then
-		print("desktop dimension X " .. desktopDimensionX)
-		print("desktop dimension Y " .. desktopDimensionY)
-		print("working dimension X " .. workingDimensionX)
-		print("working dimension Y " .. workingDimensionY)
-
-		print("player ship starting point X " .. playerShip.startPointX)
-		print("player ship starting point Y " .. playerShip.startPointY)
-	end
-	
-	love.window.setMode(workingDimensionX, workingDimensionY, {["fullscreen"]=true})
-	--love.window.setMode(workingDimensionX, workingDimensionY)
-	love.window.setTitle("Some cool title here")
-	
-	player = {}
-	player["projectiles"] = {}
-	
-	-- equipped weapon will be used later, for now it's just "cannon"
-	player["equippedWeapon"] = "cannon"
-	
+	require "window"
+	require "player"
 	require "weapons"
+	require "collision"
+	
+	targets = {}
+	
+	table.insert(targets, {
+		shape = "circle",
+		radius = 50,
+		fill = "line",
+		segments = 100,
+		collisionDetection = true,
+		collision = false,
+		health = 1000,
+		shields = 0,
+		x = 500,
+		y = 300,
+		targetType = "ufo"
+	})
+	
+	table.insert(targets, {
+		shape = "circle",
+		radius = 20,
+		fill = "line",
+		segments = 100,
+		collisionDetection = true,
+		collision = false,
+		health = 100,
+		shields = 0,
+		x = 600,
+		y = 600,
+		targetType = "ufo"
+	})
+	
+	table.insert(targets, {
+		shape = "circle",
+		radius = 100,
+		fill = "line",
+		segments = 100,
+		collisionDetection = true,
+		collision = false,
+		health = 1000,
+		shields = 0,
+		x = 1300,
+		y = 450,
+		targetType = "ufo"
+	})
+		
+	table.insert(targets, {
+		shape = "circle",
+		radius = 100,
+		fill = "line",
+		segments = 100,
+		collisionDetection = true,
+		collision = false,
+		health = 1000,
+		shields = 0,
+		x = 1100,
+		y = 8000,
+		targetType = "ufo"
+	})
+		
+	table.insert(targets, {
+		shape = "circle",
+		radius = 100,
+		fill = "line",
+		segments = 100,
+		collisionDetection = true,
+		collision = false,
+		health = 1000,
+		shields = 0,
+		x = 1400,
+		y = 550,
+		targetType = "ufo"
+	})
+		
+	table.insert(targets, {
+		shape = "circle",
+		radius = 100,
+		fill = "line",
+		segments = 100,
+		collisionDetection = true,
+		collision = false,
+		health = 1000,
+		shields = 0,
+		x = 200,
+		y = 250,
+		targetType = "ufo"
+	})
+		
+	table.insert(targets, {
+		shape = "circle",
+		radius = 100,
+		fill = "line",
+		segments = 100,
+		collisionDetection = true,
+		collision = false,
+		health = 1000,
+		shields = 0,
+		x = 300,
+		y = 350,
+		targetType = "ufo"
+	})
+		
+	table.insert(targets, {
+		shape = "circle",
+		radius = 100,
+		fill = "line",
+		segments = 100,
+		collisionDetection = true,
+		collision = false,
+		health = 1000,
+		shields = 0,
+		x = 700,
+		y = 750,
+		targetType = "ufo"
+	})
+		
+	table.insert(targets, {
+		shape = "circle",
+		radius = 100,
+		fill = "line",
+		segments = 100,
+		collisionDetection = true,
+		collision = false,
+		health = 1000,
+		shields = 0,
+		x = 100,
+		y = 150,
+		targetType = "ufo"
+	})
+		
+	table.insert(targets, {
+		shape = "circle",
+		radius = 100,
+		fill = "line",
+		segments = 100,
+		collisionDetection = true,
+		collision = false,
+		health = 1000,
+		shields = 0,
+		x = 1200,
+		y = 750,
+		targetType = "ufo"
+	})
+		
+	table.insert(targets, {
+		shape = "circle",
+		radius = 100,
+		fill = "line",
+		segments = 100,
+		collisionDetection = true,
+		collision = false,
+		health = 1000,
+		shields = 0,
+		x = 1200,
+		y = 650,
+		targetType = "ufo"
+	})
+		
+	table.insert(targets, {
+		shape = "circle",
+		radius = 100,
+		fill = "line",
+		segments = 100,
+		collisionDetection = true,
+		collision = false,
+		health = 1000,
+		shields = 0,
+		x = 1300,
+		y = 450,
+		targetType = "ufo"
+	})
+		
+	table.insert(targets, {
+		shape = "circle",
+		radius = 100,
+		fill = "line",
+		segments = 100,
+		collisionDetection = true,
+		collision = false,
+		health = 1000,
+		shields = 0,
+		x = 1400,
+		y = 450,
+		targetType = "ufo"
+	})
+		
+	table.insert(targets, {
+		shape = "circle",
+		radius = 100,
+		fill = "line",
+		segments = 100,
+		collisionDetection = true,
+		collision = false,
+		health = 1000,
+		shields = 0,
+		x = 1500,
+		y = 450,
+		targetType = "ufo"
+	})
+		
+	table.insert(targets, {
+		shape = "circle",
+		radius = 100,
+		fill = "line",
+		segments = 100,
+		collisionDetection = true,
+		collision = false,
+		health = 1000,
+		shields = 0,
+		x = 1500,
+		y = 550,
+		targetType = "ufo"
+	})
+	
+	
 end
 
 function love.update(dt)
 	movePlayerShip(dt)
+	moveTargets(dt)
 	fireWeapons(dt)
 	updateProjectiles(dt)
-end
-
-function love.keypressed(key, isrepeat)
-	if key == "c" then
-		weaponController(key)
-	end
-	if key == "escape" then
-      love.event.quit()
-   end
+	doCollisions(dt)
 end
 
 function love.draw()
-    love.graphics.draw(playerShip.image, playerShip.x, playerShip.y, 0, playerShip.scaleX, playerShip.scaleY)
+    love.graphics.draw(player.ship.image, player.ship.x, player.ship.y, 0, player.ship.scaleX, player.ship.scaleY)
 	
 	if showFPS then
 		love.graphics.print("FPS: " .. love.timer.getFPS(), (workingDimensionX - 70), 10)
@@ -94,33 +245,58 @@ function love.draw()
 	love.graphics.print("Press \"C\" to switch weapons", 10, 200)
 	love.graphics.print("Press \"ESC\" to exit", 10, 215)
 	
+	drawTargets()
 	drawProjectiles()
+end
+
+function love.keypressed(key, isrepeat)
+	if key == "c" then
+		weaponController(key)
+	end
+	if key == "escape" then
+      love.event.quit()
+   end
 end
 
 function movePlayerShip(dt)
 	if love.keyboard.isDown("w", "up") then
-		if playerShip.y > 10 then
-			playerShip.y = playerShip.y - 400*dt
+		if player.ship.y > 10 then
+			player.ship.y = player.ship.y - 400*dt
 		end
 	end	
 	
 	if love.keyboard.isDown("s", "down") then
-		if playerShip.y < (workingDimensionY - playerShip.actualY) then
-			playerShip.y = playerShip.y + 400*dt
+		if player.ship.y < (workingDimensionY - player.ship.actualY) then
+			player.ship.y = player.ship.y + 400*dt
 		end
 	end
 	
 	if love.keyboard.isDown("d", "right") then
-		if playerShip.x < (workingDimensionX - playerShip.actualX) then
-			playerShip.x = playerShip.x + 400*dt
+		if player.ship.x < (workingDimensionX - player.ship.actualX) then
+			player.ship.x = player.ship.x + 400*dt
 		end
 	end	
 	
 	if love.keyboard.isDown("a", "left") then
-		if playerShip.x > 0 then
-			playerShip.x = playerShip.x - 400*dt
+		if player.ship.x > 0 then
+			player.ship.x = player.ship.x - 400*dt
 		end
 	end
+end
+
+function drawTargets()
+	if next(targets) ~= nil then
+		for key, target in pairs(targets) do
+			if target.shape == "circle" then
+				love.graphics.circle(target.fill, target.x, target.y, target.radius, target.segments)
+				love.graphics.print("HP: " .. target.health, target.x - 25, target.y)
+			end
+		end
+	end
+end
+
+function moveTargets()
+
 end
 
 function weaponController(key)
@@ -219,14 +395,16 @@ end
 function fireCannon()
 	for key, hardpoint in pairs(weapons.cannon.hardpoints) do
 		local projectile = {
-			x = playerShip.x + hardpoint.offsetX,
-			y = playerShip.y + hardpoint.offsetY,
+			x = player.ship.x + hardpoint.offsetX,
+			y = player.ship.y + hardpoint.offsetY,
 			projectileType = "cannon",
 			collision = false,
+			shape = "point",
 			speed = hardpoint.speed,
 			angle = hardpoint.angle,
 			width = hardpoint.width,
-			height = hardpoint.height
+			height = hardpoint.height,
+			damage = weapons.cannon.damage
 		}
 		
 		table.insert(player.projectiles, projectile)
@@ -236,14 +414,16 @@ end
 function fireGatling()
 	for key, hardpoint in pairs(weapons.gatling.hardpoints) do
 		local projectile = {
-			x = playerShip.x + hardpoint.offsetX,
-			y = playerShip.y + hardpoint.offsetY,
+			x = player.ship.x + hardpoint.offsetX,
+			y = player.ship.y + hardpoint.offsetY,
 			projectileType = "gatling",
 			collision = false,
+			shape = "point",
 			speed = hardpoint.speed,
 			angle = hardpoint.angle,
 			width = hardpoint.width,
-			height = hardpoint.height
+			height = hardpoint.height,
+			damage = weapons.gatling.damage
 		}
 		
 		table.insert(player.projectiles, projectile)
@@ -255,14 +435,16 @@ function fireTurret()
 	-- turret weapon will fire at the current mouse location.
 	for key, hardpoint in pairs(weapons.turret.hardpoints) do
 		local projectile = {
-			x = playerShip.x + hardpoint.offsetX,
-			y = playerShip.y + hardpoint.offsetY,
+			x = player.ship.x + hardpoint.offsetX,
+			y = player.ship.y + hardpoint.offsetY,
 			projectileType = "turret",
 			collision = false,
+			shape = "point",
 			speed = hardpoint.speed,
 			angle = _calculateShipToMouseAngle(hardpoint),
 			width = hardpoint.width,
-			height = hardpoint.height
+			height = hardpoint.height,
+			damage = weapons.turret.damage
 		}
 		
 		table.insert(player.projectiles, projectile)
@@ -309,10 +491,7 @@ function _calculateShipToMouseAngle(hardpoint)
 	mouseX = love.mouse.getX()
 	mouseY = love.mouse.getY()
 	
-	print("mouse x: " .. mouseX)
-	print("mouse y: " .. mouseY)
-	
-	local angle = math.deg(math.atan2(mouseY - (playerShip.y + hardpoint.offsetY), mouseX - (playerShip.x + hardpoint.offsetX)))
+	local angle = math.deg(math.atan2(mouseY - (player.ship.y + hardpoint.offsetY), mouseX - (player.ship.x + hardpoint.offsetX)))
 	
 	if angle < 0 then
 		angle = angle + 360
