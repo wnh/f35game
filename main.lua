@@ -54,34 +54,66 @@ function love.load()
 	
 	player = {}
 	player["projectiles"] = {}
-	table.insert(player.projectiles, {
-		x = 500,
-		y = 500,
-		projectileType = nil,
-		collision = false,
-		onScreen = true,
-		speed = 5,
-		angle = 45
-	})
 	
 	-- equipped weapon will be used later, for now it's just "cannon"
 	player["equippedWeapon"] = "cannon"
+	
+	weapons = {}
+	
+	weapons["cannon"] = {
+		hardpoints = {},
+		frequency = 0.1,
+		lastFire = 0
+	}
+	table.insert(weapons.cannon.hardpoints, {
+		offsetX = (playerShip.actualX / 2) - 30,
+		offsetY = 60,
+		width = 2,
+		height = 5,
+		speed = 10,
+		angle = 315
+	})	
+	table.insert(weapons.cannon.hardpoints, {
+		offsetX = (playerShip.actualX / 2) - 30,
+		offsetY = 60,
+		width = 2,
+		height = 5,
+		speed = 10,
+		angle = 0
+	})
+	table.insert(weapons.cannon.hardpoints, {
+		offsetX = (playerShip.actualX / 2) + 30,
+		offsetY = 60,
+		width = 2,
+		height = 5,
+		speed = 10,
+		angle = 45
+	})	
+	table.insert(weapons.cannon.hardpoints, {
+		offsetX = (playerShip.actualX / 2) + 30,
+		offsetY = 60,
+		width = 2,
+		height = 5,
+		speed = 10,
+		angle = 0
+	})
 
 end
 
 function love.update()
-	print("update")
 	movePlayerShip()
+	fireWeapons()
 	updateProjectiles()
 end
 
 function love.draw()
-print("draw")
     love.graphics.draw(playerShip.image, playerShip.x, playerShip.y, 0, playerShip.scaleX, playerShip.scaleY)
 	
 	if showFPS then
 		love.graphics.print("FPS: " .. love.timer.getFPS(), (workingDimensionX - 70), 10)
 	end
+	
+	love.graphics.print("Projectiles: " .. table.getn(player.projectiles), 10, 10)
 	
 	drawProjectiles()
 end
@@ -113,42 +145,27 @@ function movePlayerShip()
 end
 
 function updateProjectiles()
-	blankProjectile = {
-		x = 0,
-		y = 0,
-		projectileType = nil,
-		collision = false,
-		onScreen = true,
-		speed = 1,
-		angle = 0
-	}
 	
 	-- do movement calculations
-	if player.equippedWeapon == "cannon" then
-		if next(player.projectiles) ~= nil then
-			for key, projectile in pairs(player.projectiles) do
-				scaleX = math.sin(math.rad(projectile.angle))
-				scaleY = -math.cos(math.rad(projectile.angle))
-				movementX = projectile.speed * scaleX
-				movementY = projectile.speed * scaleY
-				projectile.x = projectile.x + movementX
-				projectile.y = projectile.y + movementY
-				
-				print("currentX: " .. projectile.x)
-				print("currentY: " .. projectile.y)
-			end
+	if next(player.projectiles) ~= nil then
+		for key, projectile in pairs(player.projectiles) do
+			scaleX = math.sin(math.rad(projectile.angle))
+			scaleY = -math.cos(math.rad(projectile.angle))
+			movementX = projectile.speed * scaleX
+			movementY = projectile.speed * scaleY
+			projectile.x = projectile.x + movementX
+			projectile.y = projectile.y + movementY
 		end
 	end
 	
 	-- delete any objects that were removed from screen
 	if next(player.projectiles) ~= nil then
-		for key, projectile in pairs(player.projectiles) do
-			if projectile.x < 0 or projectile.x > workingDimensionX or projectile.y < 0 or projectile.y > workingDimensionY then
-				player.projectiles[key] = nil
+		local i=1
+		while i <= #player.projectiles do
+			if player.projectiles[i].x < 0 or player.projectiles[i].x > workingDimensionX or player.projectiles[i].y < 0 or player.projectiles[i].y > workingDimensionY then
+				table.remove(player.projectiles, i)
 			end
-			
-			print("currentX: " .. projectile.x)
-			print("currentY: " .. projectile.y)
+			i = i + 1
 		end
 	end
 end
@@ -156,9 +173,76 @@ end
 function drawProjectiles()
 	if next(player.projectiles) ~= nil then
 		for key, projectile in pairs(player.projectiles) do
-		print("drawing at x: " .. projectile.x)
-		print("drawing at y: " .. projectile.y)
-			love.graphics.circle("fill", projectile.x, projectile.y, 10, 25)
+		print("we have projectiles")
+			if projectile.projectileType == "cannon" then
+				vertices = calculateCannonRectangle(projectile)
+				love.graphics.polygon("fill", vertices)
+			end
 		end
 	end
+end
+
+function fireWeapons()
+	if player.equippedWeapon == "cannon" then
+		weapons.cannon.lastFire = weapons.cannon.lastFire + love.timer.getDelta()
+		if weapons.cannon.lastFire > weapons.cannon.frequency then
+			fireCannon()
+			weapons.cannon.lastFire = 0
+		end
+	end
+end
+
+function fireCannon()
+	for key, hardpoint in pairs(weapons.cannon.hardpoints) do
+		local projectile = {
+			x = playerShip.x + hardpoint.offsetX,
+			y = playerShip.y + hardpoint.offsetY,
+			projectileType = "cannon",
+			collision = false,
+			speed = hardpoint.speed,
+			angle = hardpoint.angle,
+			width = hardpoint.width,
+			height = hardpoint.height
+		}
+		
+		table.insert(player.projectiles, projectile)
+	end
+	
+	
+end
+
+function calculateCannonRectangle(projectile)
+	local polyCenterX = projectile.x
+	local polyCenterY = projectile.y
+	local polyWidth = projectile.width
+	local polyHeight = projectile.height
+	
+	x1 = polyCenterX - (polyWidth / 2)
+	y1 = polyCenterY - (polyHeight / 2)
+	x2 = polyCenterX + (polyWidth / 2)
+	y2 = polyCenterY - (polyHeight / 2)
+	x3 = polyCenterX + (polyWidth / 2)
+	y3 = polyCenterY + (polyHeight / 2)
+	x4 = polyCenterX - (polyWidth / 2)
+	y4 = polyCenterY + (polyHeight / 2)
+	
+	if projectile.angle ~= 0 then
+		x1r, y1r = rotatePoint(x1, y1, polyCenterX, polyCenterY, projectile.angle)
+		x2r, y2r = rotatePoint(x2, y2, polyCenterX, polyCenterY, projectile.angle)
+		x3r, y3r = rotatePoint(x3, y3, polyCenterX, polyCenterY, projectile.angle)
+		x4r, y4r = rotatePoint(x4, y4, polyCenterX, polyCenterY, projectile.angle)
+		
+		return {x1r, y1r, x2r, y2r, x3r, y3r, x4r, y4r}
+	end
+	
+	return {x1, y1, x2, y2, x3, y3, x4, y4}
+end
+
+function rotatePoint(pointX, pointY, originX, originY, angle)
+	local angle = angle * math.pi / 180.0
+	
+	x = math.cos(angle) * (pointX-originX) - math.sin(angle) * (pointY-originY) + originX
+	y = math.sin(angle) * (pointX-originX) + math.cos(angle) * (pointY-originY) + originY
+	
+	return x, y
 end
