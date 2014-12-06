@@ -11,10 +11,10 @@ table.insert(weapons.cannon.hardpoints, {
 	offsetY = 60,
 	width = 2,
 	height = 5,
-	speed = 500,
+	speed = 1500,
 	angle = 0
 })
---[[table.insert(weapons.cannon.hardpoints, {
+table.insert(weapons.cannon.hardpoints, {
 	offsetX = (player.ship.actualX / 2) + 30,
 	offsetY = 60,
 	width = 2,
@@ -37,7 +37,7 @@ table.insert(weapons.cannon.hardpoints, {
 	height = 5,
 	speed = 1500,
 	angle = 340
-})--]]
+})
 
 weapons["turret"] = {
 	hardpoints = {},
