@@ -22,203 +22,8 @@ function love.load()
 		shields = 0,
 		x = 500,
 		y = 300,
-		targetType = "ufo"
-	})
-	
-	table.insert(targets, {
-		shape = "circle",
-		radius = 20,
-		fill = "line",
-		segments = 100,
-		collisionDetection = true,
-		collision = false,
-		health = 100,
-		shields = 0,
-		x = 600,
-		y = 600,
-		targetType = "ufo"
-	})
-	
-	table.insert(targets, {
-		shape = "circle",
-		radius = 100,
-		fill = "line",
-		segments = 100,
-		collisionDetection = true,
-		collision = false,
-		health = 1000,
-		shields = 0,
-		x = 1300,
-		y = 450,
-		targetType = "ufo"
-	})
-		
-	table.insert(targets, {
-		shape = "circle",
-		radius = 100,
-		fill = "line",
-		segments = 100,
-		collisionDetection = true,
-		collision = false,
-		health = 1000,
-		shields = 0,
-		x = 1100,
-		y = 8000,
-		targetType = "ufo"
-	})
-		
-	table.insert(targets, {
-		shape = "circle",
-		radius = 100,
-		fill = "line",
-		segments = 100,
-		collisionDetection = true,
-		collision = false,
-		health = 1000,
-		shields = 0,
-		x = 1400,
-		y = 550,
-		targetType = "ufo"
-	})
-		
-	table.insert(targets, {
-		shape = "circle",
-		radius = 100,
-		fill = "line",
-		segments = 100,
-		collisionDetection = true,
-		collision = false,
-		health = 1000,
-		shields = 0,
-		x = 200,
-		y = 250,
-		targetType = "ufo"
-	})
-		
-	table.insert(targets, {
-		shape = "circle",
-		radius = 100,
-		fill = "line",
-		segments = 100,
-		collisionDetection = true,
-		collision = false,
-		health = 1000,
-		shields = 0,
-		x = 300,
-		y = 350,
-		targetType = "ufo"
-	})
-		
-	table.insert(targets, {
-		shape = "circle",
-		radius = 100,
-		fill = "line",
-		segments = 100,
-		collisionDetection = true,
-		collision = false,
-		health = 1000,
-		shields = 0,
-		x = 700,
-		y = 750,
-		targetType = "ufo"
-	})
-		
-	table.insert(targets, {
-		shape = "circle",
-		radius = 100,
-		fill = "line",
-		segments = 100,
-		collisionDetection = true,
-		collision = false,
-		health = 1000,
-		shields = 0,
-		x = 100,
-		y = 150,
-		targetType = "ufo"
-	})
-		
-	table.insert(targets, {
-		shape = "circle",
-		radius = 100,
-		fill = "line",
-		segments = 100,
-		collisionDetection = true,
-		collision = false,
-		health = 1000,
-		shields = 0,
-		x = 1200,
-		y = 750,
-		targetType = "ufo"
-	})
-		
-	table.insert(targets, {
-		shape = "circle",
-		radius = 100,
-		fill = "line",
-		segments = 100,
-		collisionDetection = true,
-		collision = false,
-		health = 1000,
-		shields = 0,
-		x = 1200,
-		y = 650,
-		targetType = "ufo"
-	})
-		
-	table.insert(targets, {
-		shape = "circle",
-		radius = 100,
-		fill = "line",
-		segments = 100,
-		collisionDetection = true,
-		collision = false,
-		health = 1000,
-		shields = 0,
-		x = 1300,
-		y = 450,
-		targetType = "ufo"
-	})
-		
-	table.insert(targets, {
-		shape = "circle",
-		radius = 100,
-		fill = "line",
-		segments = 100,
-		collisionDetection = true,
-		collision = false,
-		health = 1000,
-		shields = 0,
-		x = 1400,
-		y = 450,
-		targetType = "ufo"
-	})
-		
-	table.insert(targets, {
-		shape = "circle",
-		radius = 100,
-		fill = "line",
-		segments = 100,
-		collisionDetection = true,
-		collision = false,
-		health = 1000,
-		shields = 0,
-		x = 1500,
-		y = 450,
-		targetType = "ufo"
-	})
-		
-	table.insert(targets, {
-		shape = "circle",
-		radius = 100,
-		fill = "line",
-		segments = 100,
-		collisionDetection = true,
-		collision = false,
-		health = 1000,
-		shields = 0,
-		x = 1500,
-		y = 550,
-		targetType = "ufo"
+		targetType = "ufo",
+		image = love.graphics.newImage("badguy1.png")
 	})
 	
 	
@@ -288,7 +93,7 @@ function drawTargets()
 	if next(targets) ~= nil then
 		for key, target in pairs(targets) do
 			if target.shape == "circle" then
-				love.graphics.circle(target.fill, target.x, target.y, target.radius, target.segments)
+				love.graphics.draw(target.image, target.x, target.y)
 				love.graphics.print("HP: " .. target.health, target.x - 25, target.y)
 			end
 		end
@@ -329,7 +134,6 @@ function weaponController(key)
 end
 
 function updateProjectiles(dt)
-	
 	-- do movement calculations
 	if next(player.projectiles) ~= nil then
 		for key, projectile in pairs(player.projectiles) do
