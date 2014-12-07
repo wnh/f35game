@@ -26,6 +26,8 @@ function love.load()
 		image = love.graphics.newImage("badguy1.png")
 	})
 	
+	love.graphics.setBackgroundColor(0, 0, 255)
+	
 	  id = love.image.newImageData(18, 18)
 	  --1b. fill that blank image data
 	  for x = 0, 17 do
@@ -38,27 +40,21 @@ function love.load()
   i = love.graphics.newImage("particle.png")
   p = love.graphics.newParticleSystem(i, 256)
   p:setEmissionRate(100)
+  p:setEmitterLifetime(1.5)
   p:setParticleLifetime(0.5)
   p:setDirection(math.pi / 2)
-  p:setSpread(0)
-  p:setSpeed(50, 50)
+  p:setSpread(0.5)
+  p:setSpeed(100, 100)
   p:setSizes(1, 0.25)
   p:setSizeVariation(1)
   p:setColors(255, 96, 0, 240, 255, 255, 255, 10)
   p:stop()
-  
-  love.mouse.setVisible(false);
-  px = 0
-  py = 0
 	
+	missileImage = love.graphics.newImage("missile.png")
 	
 end
 
 function love.update(dt)
-
-  p:start();
-  
-  p:update(dt);
 	movePlayerShip(dt)
 	moveTargets(dt)
 	fireWeapons(dt)
@@ -67,8 +63,6 @@ function love.update(dt)
 end
 
 function love.draw()
-    love.graphics.draw(player.ship.image, player.ship.x, player.ship.y, 0, player.ship.scaleX, player.ship.scaleY)
-	
 	if showFPS then
 		love.graphics.print("FPS: " .. love.timer.getFPS(), (workingDimensionX - 70), 10)
 	end
@@ -81,6 +75,7 @@ function love.draw()
 	
 	drawTargets()
 	drawProjectiles()
+	love.graphics.draw(player.ship.image, player.ship.x, player.ship.y, 0, player.ship.scaleX, player.ship.scaleY)
 end
 
 function love.keypressed(key, isrepeat)
@@ -122,7 +117,8 @@ function drawTargets()
 	if next(targets) ~= nil then
 		for key, target in pairs(targets) do
 			if target.shape == "circle" then
-				love.graphics.draw(target.image, target.x, target.y)
+				love.graphics.circle(target.fill, target.x, target.y, target.radius, target.segments)
+				--love.graphics.draw(target.image, target.x, target.y)
 				love.graphics.print("HP: " .. target.health, target.x - 25, target.y)
 			end
 		end
@@ -184,7 +180,6 @@ function updateProjectiles(dt)
 	if next(player.projectiles) ~= nil then
 		for key, projectile in pairs(player.projectiles) do
 			if projectile.particle ~= nil then
-				projectile.particle:start()
 				projectile.particle:update(dt)
 			end
 		end
@@ -212,9 +207,8 @@ function drawProjectiles()
 			end		
 
 			if projectile.projectileType == "missile" then
-				love.graphics.draw(projectile.particle, projectile.x, projectile.y + projectile.height * 0.5)
-				vertices = calculateCannonRectangle(projectile)
-				love.graphics.polygon("fill", vertices)
+				love.graphics.draw(projectile.particle, projectile.x + 10, projectile.y + 40)
+				love.graphics.draw(missileImage, projectile.x, projectile.y, 0, 0.75, 0.75)
 				
 			end				
 		end
@@ -331,6 +325,8 @@ function fireMissile()
 			acceleration = hardpoint.acceleration,
 			particle = p:clone()
 		}
+		
+		projectile.particle:start()
 		
 		table.insert(player.projectiles, projectile)
 	end

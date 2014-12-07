@@ -8,7 +8,7 @@ weapons["cannon"] = {
 }	
 table.insert(weapons.cannon.hardpoints, {
 	offsetX = (player.ship.actualX / 2) - 30,
-	offsetY = 60,
+	offsetY = 100,
 	width = 2,
 	height = 5,
 	speed = 1500,
@@ -16,7 +16,7 @@ table.insert(weapons.cannon.hardpoints, {
 })
 table.insert(weapons.cannon.hardpoints, {
 	offsetX = (player.ship.actualX / 2) + 30,
-	offsetY = 60,
+	offsetY = 100,
 	width = 2,
 	height = 5,
 	speed = 1500,
@@ -24,7 +24,7 @@ table.insert(weapons.cannon.hardpoints, {
 })
 table.insert(weapons.cannon.hardpoints, {
 	offsetX = (player.ship.actualX / 2) + 30,
-	offsetY = 60,
+	offsetY = 100,
 	width = 2,
 	height = 5,
 	speed = 1500,
@@ -32,7 +32,7 @@ table.insert(weapons.cannon.hardpoints, {
 })
 table.insert(weapons.cannon.hardpoints, {
 	offsetX = (player.ship.actualX / 2) - 30,
-	offsetY = 60,
+	offsetY = 100,
 	width = 2,
 	height = 5,
 	speed = 1500,
@@ -46,16 +46,16 @@ weapons["turret"] = {
 	damage = 25
 }	
 table.insert(weapons.turret.hardpoints, {
-	offsetX = (player.ship.actualX / 2) + 30,
-	offsetY = 60,
+	offsetX = (player.ship.actualX / 2) + 50,
+	offsetY = 120,
 	width = 2,
 	height = 5,
 	speed = 500,
 	angle = 0
 })
 table.insert(weapons.turret.hardpoints, {
-	offsetX = (player.ship.actualX / 2) - 30,
-	offsetY = 60,
+	offsetX = (player.ship.actualX / 2) - 50,
+	offsetY = 120,
 	width = 2,
 	height = 5,
 	speed = 500,
@@ -64,21 +64,21 @@ table.insert(weapons.turret.hardpoints, {
 
 weapons["gatling"] = {
 	hardpoints = {},
-	frequency = 0.04,
+	frequency = 0.03,
 	lastFire = 0,
 	damage = 10
 }	
 table.insert(weapons.gatling.hardpoints, {
-	offsetX = (player.ship.actualX / 2) + 30,
-	offsetY = 60,
+	offsetX = (player.ship.actualX / 2) + 15,
+	offsetY = 50,
 	width = 2,
 	height = 5,
 	speed = 1500,
 	angle = 0
 })
 table.insert(weapons.gatling.hardpoints, {
-	offsetX = (player.ship.actualX / 2) - 30,
-	offsetY = 60,
+	offsetX = (player.ship.actualX / 2) - 15,
+	offsetY = 50,
 	width = 2,
 	height = 5,
 	speed = 1500,
@@ -93,7 +93,7 @@ weapons["missile"] = {
 }	
 table.insert(weapons.missile.hardpoints, {
 	offsetX = (player.ship.actualX / 2) + 30,
-	offsetY = 60,
+	offsetY = 100,
 	width = 8,
 	height = 20,
 	speed = 50,
@@ -102,8 +102,8 @@ table.insert(weapons.missile.hardpoints, {
 })
 
 table.insert(weapons.missile.hardpoints, {
-	offsetX = (player.ship.actualX / 2) - 30,
-	offsetY = 60,
+	offsetX = (player.ship.actualX / 2) - 51,
+	offsetY = 100,
 	width = 8,
 	height = 20,
 	speed = 50,

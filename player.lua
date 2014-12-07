@@ -4,8 +4,8 @@ player["ship"] = {
 	y = 0,
 	shields = 50,
 	health = 100,
-	scaleX = 0.15,
-	scaleY = 0.15,
+	scaleX = 0.6,
+	scaleY = 0.6,
 	image = love.graphics.newImage("playerShip.png")
 }
 
