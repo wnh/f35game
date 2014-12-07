@@ -26,10 +26,39 @@ function love.load()
 		image = love.graphics.newImage("badguy1.png")
 	})
 	
+	  id = love.image.newImageData(18, 18)
+	  --1b. fill that blank image data
+	  for x = 0, 17 do
+		for y = 0, 17 do
+		  local gradient = 1 - ((x-15)^2+(y-15)^2)/40
+		  id:setPixel(x, y, 255, 255, 255, 255*(gradient<0 and 0 or gradient))
+		end
+	  end
+	
+  i = love.graphics.newImage("particle.png")
+  p = love.graphics.newParticleSystem(i, 256)
+  p:setEmissionRate(100)
+  p:setParticleLifetime(0.5)
+  p:setDirection(math.pi / 2)
+  p:setSpread(0)
+  p:setSpeed(50, 50)
+  p:setSizes(1, 0.25)
+  p:setSizeVariation(1)
+  p:setColors(255, 96, 0, 240, 255, 255, 255, 10)
+  p:stop()
+  
+  love.mouse.setVisible(false);
+  px = 0
+  py = 0
+	
 	
 end
 
 function love.update(dt)
+
+  p:start();
+  
+  p:update(dt);
 	movePlayerShip(dt)
 	moveTargets(dt)
 	fireWeapons(dt)
@@ -139,10 +168,25 @@ function updateProjectiles(dt)
 		for key, projectile in pairs(player.projectiles) do
 			scaleX = math.sin(math.rad(projectile.angle))
 			scaleY = -math.cos(math.rad(projectile.angle))
+			
+			if projectile.acceleration ~= nil then
+				projectile.speed = projectile.speed + projectile.acceleration
+			end
+			
 			movementX = projectile.speed * scaleX
 			movementY = projectile.speed * scaleY
 			projectile.x = projectile.x + movementX*dt
 			projectile.y = projectile.y + movementY*dt
+		end
+	end
+	
+	-- update any particle systems
+	if next(player.projectiles) ~= nil then
+		for key, projectile in pairs(player.projectiles) do
+			if projectile.particle ~= nil then
+				projectile.particle:start()
+				projectile.particle:update(dt)
+			end
 		end
 	end
 	
@@ -165,7 +209,14 @@ function drawProjectiles()
 			if projectile.projectileType == "cannon" or projectile.projectileType == "turret" or projectile.projectileType == "gatling" then
 				vertices = calculateCannonRectangle(projectile)
 				love.graphics.polygon("fill", vertices)
-			end			
+			end		
+
+			if projectile.projectileType == "missile" then
+				love.graphics.draw(projectile.particle, projectile.x, projectile.y + projectile.height * 0.5)
+				vertices = calculateCannonRectangle(projectile)
+				love.graphics.polygon("fill", vertices)
+				
+			end				
 		end
 	end
 end
@@ -192,6 +243,14 @@ function fireWeapons(dt)
 		if weapons.gatling.lastFire > weapons.gatling.frequency then
 			fireGatling()
 			weapons.gatling.lastFire = 0
+		end
+	end
+		
+	if player.equippedWeapon == "missile" then
+		weapons.missile.lastFire = weapons.missile.lastFire + love.timer.getDelta()
+		if weapons.missile.lastFire > weapons.missile.frequency then
+			fireMissile()
+			weapons.missile.lastFire = 0
 		end
 	end
 end
@@ -249,6 +308,28 @@ function fireTurret()
 			width = hardpoint.width,
 			height = hardpoint.height,
 			damage = weapons.turret.damage
+		}
+		
+		table.insert(player.projectiles, projectile)
+	end
+end
+
+function fireMissile()
+	-- turret weapon will fire at the current mouse location.
+	for key, hardpoint in pairs(weapons.missile.hardpoints) do
+		local projectile = {
+			x = player.ship.x + hardpoint.offsetX,
+			y = player.ship.y + hardpoint.offsetY,
+			projectileType = "missile",
+			collision = false,
+			shape = "point",
+			speed = hardpoint.speed,
+			angle = hardpoint.angle,
+			width = hardpoint.width,
+			height = hardpoint.height,
+			damage = weapons.missile.damage,
+			acceleration = hardpoint.acceleration,
+			particle = p:clone()
 		}
 		
 		table.insert(player.projectiles, projectile)

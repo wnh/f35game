@@ -84,3 +84,29 @@ table.insert(weapons.gatling.hardpoints, {
 	speed = 1500,
 	angle = 0
 })
+
+weapons["missile"] = {
+	hardpoints = {},
+	frequency = 0.5,
+	lastFire = 0,
+	damage = 250
+}	
+table.insert(weapons.missile.hardpoints, {
+	offsetX = (player.ship.actualX / 2) + 30,
+	offsetY = 60,
+	width = 8,
+	height = 20,
+	speed = 50,
+	acceleration = 10;
+	angle = 0
+})
+
+table.insert(weapons.missile.hardpoints, {
+	offsetX = (player.ship.actualX / 2) - 30,
+	offsetY = 60,
+	width = 8,
+	height = 20,
+	speed = 50,
+	acceleration = 10;
+	angle = 0
+})
