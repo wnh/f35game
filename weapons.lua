@@ -34,9 +34,13 @@ function Weapon:setPrettyName(name)
 end
 
 function Weapon:addHardpoint(hardpoint)
-	table.insert(self.hardpoints, hardpoint)
+  table.insert(self.hardpoints, hardpoint)
 end
 
 function Weapon:update(dt)
-	print("we're in update")
+	for key, hardpoint in ipairs(self.hardpoints) do
+	 if hardpoint.lastFire >= hardpoint.cyclicRate then
+	   table.insert(projectiles, hardpoint.projectile)
+	 end
+	end
 end

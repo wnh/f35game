@@ -95,6 +95,7 @@ function love.draw()
 	end
 	
 	player.ship:draw()
+	projectiles.draw()
 	--[[
 	love.graphics.print("Projectiles: " .. table.getn(player.projectiles), 10, 10)
 	love.graphics.print("Equipped Weapon: " .. player.equippedWeapon, 10, 25)
