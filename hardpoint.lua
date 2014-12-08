@@ -1,25 +1,17 @@
-Hardpoint = {
-	cyclicRate = 0.1,
-	xOffset = 0,
-	yOffset = 0,
-	lastFire = 0,
-	firingAngle = 0,
-	projectile = nil
-}
+Hardpoint = {}
 
-function Hardpoint:new(o)
-  o = o or {}
-  setmetatable(o, self)
-  self.__index = self
-  return o
-end
-
-function Hardpoint:init(cyclicRate, xOffset, yOffset, firingAngle, projectile)
-	self.cyclicRate = cyclicRate
-	self.xOffset = xOffset
-	self.yOffset = yOffset
-	self.firingAngle = firingAngle
-	self.projectile = projectile
+function Hardpoint:new(cyclicRate, xOffset, yOffset, firingAngle, projectile)
+	o = {
+		cyclicRate = cyclicRate,
+		xOffset = xOffset,
+		yOffset = yOffset,
+		lastFire = 0,
+		firingAngle = firingAngle,
+		projectile = projectile
+	}
+	setmetatable(o, self)
+	self.__index = self
+	return o
 end
 
 --[[weapons = {}

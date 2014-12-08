@@ -1,49 +1,39 @@
 -- keep this around as a reminder of how to type check --
 -- assert(tostring(image) == "Image", "expecting type Image, got " .. tostring(image))
 
-Player = {
-	level = 0,
-	experience = 0,
-	ship = nil
-}
+Player = {}
 
-function Player:new(o)
-  o = o or {}
+function Player:new(ship)
+  o = {
+  	level = 0,
+	experience = 0,
+	ship = ship
+  }
   setmetatable(o, self)
   self.__index = self
   return o
-end
-
-function Player:init(ship)
-	self.ship = ship
 end
 
 function Player:update(dt)
 	self.ship:update(dt)
 end
 
-PlayerShip = {
-	x = 0,
-	y = 0,
-	image = nil,
+PlayerShip = {}
+
+function PlayerShip:new(image, x, y)
+  o = {
+  	image = love.graphics.newImage(image),
+	x = x,
+	y = y,
 	scaleX = 1,
 	scaleY = 1,
 	width = nil,
 	height = nil,
 	movementSpeed = 1000
-}
-
-function PlayerShip:new(o)
-  o = o or {}
+  }
   setmetatable(o, self)
   self.__index = self
   return o
-end
-
-function PlayerShip:init(image, x, y)
-	self.image = love.graphics.newImage(image)
-	self.x = x
-	self.y = y
 end
 
 function PlayerShip:setDimensions(width, height)

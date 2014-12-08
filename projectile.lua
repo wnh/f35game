@@ -1,27 +1,20 @@
-Projectile = {
-	x = 0,
-	y = 0,
-	speed = 0,
-	acceleration = 0,
-	damage = 0,
-	angle = nil,
-	tracking = nil,
-	hitbox = nil,
-	draw = nil
-}
+Projectile = {}
 
-function Projectile:new(o)
-  o = o or {}
-  setmetatable(o, self)
-  self.__index = self
-  return o
-end
-
-function Projectile:init(speed, damage, hitbox, draw)
-	self.speed = speed
-	self.damage = damage
-	self.hitbox = hitbox
-	self.draw = draw
+function Projectile:new(speed, damage, hitbox, draw)
+	o = {
+		x = 0,
+		y = 0,
+		speed = speed,
+		acceleration = 0,
+		damage = damage,
+		angle = 0,
+		tracking = nil,
+		hitbox = hitbox,
+		draw = draw
+	}
+	setmetatable(o, self)
+	self.__index = self
+	return o
 end
 
 cannonProjectileHitbox = {

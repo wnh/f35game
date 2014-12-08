@@ -5,10 +5,9 @@ function weapons:add(weapon)
 end
 
 function weapons:update(dt)
-	print(table.getn(self))
 	for key, thisWeapon in ipairs(self) do
 		if thisWeapon.equipped == true then
-			print("firing: " .. thisWeapon.prettyName)
+			thisWeapon:update(dt)
 		end
 	end
 end
@@ -17,17 +16,17 @@ function weapons:equip(index)
 	self[index].equipped = true
 end
 
-Weapon = {
-	equipped = false,
-	hardpoints = {},
-	prettyName = ""
-}
+Weapon = {}
 
-function Weapon:new(o)
-  o = o or {}
-  setmetatable(o, self)
-  self.__index = self
-  return o
+function Weapon:new(prettyName)
+	o = {
+		equipped = false,
+		hardpoints = {},
+		prettyName = prettyName
+	}
+	setmetatable(o, self)
+	self.__index = self
+	return o
 end
 
 function Weapon:setPrettyName(name)
@@ -39,5 +38,5 @@ function Weapon:addHardpoint(hardpoint)
 end
 
 function Weapon:update(dt)
-	
+	print("we're in update")
 end

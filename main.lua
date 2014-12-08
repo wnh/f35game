@@ -9,30 +9,19 @@ require "hardpoint"
 require "weapons"
 
 function love.load()
-	playerShip = PlayerShip:new()
-	playerShip:init("playerShip.png", 0, 0)
+	playerShip = PlayerShip:new("playerShip.png", 0, 0)
 	playerShip:setScale(0.5, 0.5)
 	playerShip:calculateStartingPoint()
-	player = Player:new()
-	player:init(playerShip)
+	player = Player:new(playerShip)
 	
-	cannon = Weapon:new()
-	cannon:setPrettyName("Mult-vector Chain Gun")
-	--[[turret = Weapon:new()
-	turret:setPrettyName("WT45 Auto-tracking Turret")
-	gatling = Weapon:new()
-	gatling:setPrettyName("X491 Tank Buster")
-	missiles = Weapon:new()
-	missiles:setPrettyName("T51 Air to Air Missiles")]]
+	cannon = Weapon:new("Mult-vector Chain Gun")
+	--[[turret = Weapon:new("WT45 Auto-tracking Turret")
+	gatling = Weapon:new("X491 Tank Buster")
+	missiles = Weapon:new("T51 Air to Air Missiles")]]
 	
-	cannonProjectile = Projectile:new()
-	cannonProjectile:init(1500, 10, cannonProjectileHitbox, cannonProjectileDraw)
-	
-	cannonHardpoint1 = Hardpoint:new()
-	cannonHardpoint1:init(0.1, player.ship.width / 2 + 30, 100, 0, cannonProjectile)
-	cannonHardpoint2 = Hardpoint:new()
-	cannonHardpoint2:init(0.1, player.ship.width / 2 - 30, 100, 0, cannonProjectile)
-	
+	cannonProjectile = Projectile:new(1500, 10, cannonProjectileHitbox, cannonProjectileDraw)
+	cannonHardpoint1 = Hardpoint:new(0.1, player.ship.width / 2 + 30, 100, 0, cannonProjectile)
+	cannonHardpoint2 = Hardpoint:new(0.1, player.ship.width / 2 - 30, 100, 0, cannonProjectile)
 	cannon:addHardpoint(cannonHardpoint1)
 	cannon:addHardpoint(cannonHardpoint2)
 	
