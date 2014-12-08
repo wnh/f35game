@@ -1,12 +1,46 @@
 debugOn = true
 showFPS = true
 fullScreen = false
-lastCollision = 0
+
+require "window"
+require "player"
+require "projectile"
+require "hardpoint"
+require "weapons"
 
 function love.load()
-	require "window"
-	require "player"
-	require "weapons"
+	playerShip = PlayerShip:new()
+	playerShip:init("playerShip.png", 0, 0)
+	playerShip:setScale(0.5, 0.5)
+	playerShip:calculateStartingPoint()
+	player = Player:new()
+	player:init(playerShip)
+	
+	cannon = Weapon:new()
+	cannon:setPrettyName("Mult-vector Chain Gun")
+	--[[turret = Weapon:new()
+	turret:setPrettyName("WT45 Auto-tracking Turret")
+	gatling = Weapon:new()
+	gatling:setPrettyName("X491 Tank Buster")
+	missiles = Weapon:new()
+	missiles:setPrettyName("T51 Air to Air Missiles")]]
+	
+	cannonProjectile = Projectile:new()
+	cannonProjectile:init(1500, 10, cannonProjectileHitbox, cannonProjectileDraw)
+	
+	cannonHardpoint1 = Hardpoint:new()
+	cannonHardpoint1:init(0.1, player.ship.width / 2 + 30, 100, 0, cannonProjectile)
+	cannonHardpoint2 = Hardpoint:new()
+	cannonHardpoint2:init(0.1, player.ship.width / 2 - 30, 100, 0, cannonProjectile)
+	
+	cannon:addHardpoint(cannonHardpoint1)
+	cannon:addHardpoint(cannonHardpoint2)
+	
+	weapons:add(cannon)
+	weapons:equip(1)
+
+	--[[require "player"
+	
 	require "collision"
 	
 	targets = {}
@@ -50,16 +84,20 @@ function love.load()
   p:setColors(255, 96, 0, 240, 255, 255, 255, 10)
   p:stop()
 	
-	missileImage = love.graphics.newImage("missile.png")
+	missileImage = love.graphics.newImage("missile.png")--]]
 	
 end
 
 function love.update(dt)
+	player:update(dt)
+	weapons:update(dt)
+--[[
 	movePlayerShip(dt)
 	moveTargets(dt)
 	fireWeapons(dt)
 	updateProjectiles(dt)
 	doCollisions(dt)
+	--]]
 end
 
 function love.draw()
@@ -67,6 +105,8 @@ function love.draw()
 		love.graphics.print("FPS: " .. love.timer.getFPS(), (workingDimensionX - 70), 10)
 	end
 	
+	player.ship:draw()
+	--[[
 	love.graphics.print("Projectiles: " .. table.getn(player.projectiles), 10, 10)
 	love.graphics.print("Equipped Weapon: " .. player.equippedWeapon, 10, 25)
 	
@@ -76,9 +116,10 @@ function love.draw()
 	drawTargets()
 	drawProjectiles()
 	love.graphics.draw(player.ship.image, player.ship.x, player.ship.y, 0, player.ship.scaleX, player.ship.scaleY)
+	--]]
 end
 
-function love.keypressed(key, isrepeat)
+--[[function love.keypressed(key, isrepeat)
 	if key == "c" then
 		weaponController(key)
 	end
@@ -381,4 +422,4 @@ function _calculateShipToMouseAngle(hardpoint)
 	angle = angle + 90
 	
 	return angle
-end
+end --]]
